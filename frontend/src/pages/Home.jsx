@@ -1,0 +1,102 @@
+import { useState } from "react";
+import axios from "axios";
+import Sidebar from "../components/Sidebar"; 
+import UploadForm from "../components/UploadForm";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+
+const Home = () => {
+  const [notes, setNotes] = useState("");
+  const [editedNotes, setEditedNotes] = useState("");
+  const [notesHistory, setNotesHistory] = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  const handleUpload = async (files) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/generate", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setNotes(res.data.notes);
+      setEditedNotes(res.data.notes);
+      setNotesHistory((prev) => [res.data.notes, ...prev]);
+    } catch (err) {
+      console.error("Error uploading images:", err);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/download-pdf",
+        { notes: editedNotes },
+        {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "notes.pdf";
+      link.click();
+    } catch (err) {
+      console.error("Failed to download PDF:", err);
+    }
+  };
+
+  const handleNotesChange = (event) => {
+    setEditedNotes(event.target.value);
+  };
+
+  const handleSelectNote = (note) => {
+    setNotes(note);
+    setEditedNotes(note);
+  };
+
+  return (
+    <div className="flex">
+      <Sidebar
+        notesHistory={notesHistory}
+        onSelectNote={handleSelectNote}
+        isOpen={sidebarOpen}
+        toggleSidebar={toggleSidebar}
+      />
+
+      <main className="flex-1 p-4 md:ml-16 mt-12 md:mt-10">
+        <UploadForm onUpload={handleUpload} />
+
+        {notes && (
+          <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto">
+            <h2 className="text-xl font-semibold mb-2">
+              Generated Notes:{" "}
+              <span className="text-[16px] text-green-900">(You can edit the notes here)</span>
+            </h2>
+            <Textarea
+              value={editedNotes}
+              onChange={handleNotesChange}
+              className="w-full h-48 mb-4"
+            />
+            <Button className="mt-4" onClick={handleDownloadPDF}>
+              Download as PDF
+            </Button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default Home;
