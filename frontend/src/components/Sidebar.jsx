@@ -14,10 +14,10 @@ const Sidebar = ({ notesHistory, onSelectNote, isOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-64 bg-gray-100 p-4 border-r transition-transform duration-300 ease-in-out
+        className={`fixed top-0 left-0 z-40 h-[820px] w-64 bg-gray-100 p-4 border-r transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:relative md:translate-x-0 shadow-2xl `}
       >
-        <h1 className="text-2xl font-bold text-center mb-6 mt-7">AI Notes Maker</h1>
+        <h1 className="text-2xl font-bold text-center mb-6 mt-7">EzNotes Ai</h1>
 
         <h2 className="text-lg font-semibold mb-2">Previous Notes</h2>
         <div className="flex flex-col gap-2">

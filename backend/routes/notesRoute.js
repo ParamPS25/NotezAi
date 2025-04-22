@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { generateNotes } from '../controllers/notesController.js';
+import {authenticateUser} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -12,6 +13,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-router.post('/', upload.array('images'), generateNotes);
+router.post('/', authenticateUser ,upload.array('images'), generateNotes);
 
 export default router;

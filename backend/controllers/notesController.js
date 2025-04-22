@@ -21,7 +21,7 @@ export const generateNotes = async (req, res) => {
 
     // trim any leading or trailing whitespace
     const cleanedSummaryWithoutNewLines = cleanedSummary.trim()
-    console.log('Cleaned summary:', cleanedSummaryWithoutNewLines);
+    // console.log('Cleaned summary:', cleanedSummaryWithoutNewLines);
 
     clearUploadFolder();                                // Clear the upload folder after processing
     return res.json({ notes: cleanedSummaryWithoutNewLines });

@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import UploadForm from "../components/UploadForm";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import UserAuthStatus from "../components/UserAuthStatus";
 
 const Home = () => {
   const [notes, setNotes] = useState("");
@@ -21,6 +22,7 @@ const Home = () => {
 
     try {
       const res = await axios.post("http://localhost:5000/api/generate", formData, {
+        withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -75,7 +77,12 @@ const Home = () => {
         toggleSidebar={toggleSidebar}
       />
 
-      <main className="flex-1 p-4 md:ml-16 mt-12 md:mt-10">
+      <main className="flex-1 p-4 md:ml-16 mt-5 md:mt-10">
+          <div className="p-4 border-b flex justify-between items-center">
+            <h1 className="text-lg font-bold">AI Notes Maker</h1>
+              <UserAuthStatus />
+          </div>
+
         <UploadForm onUpload={handleUpload} />
 
         {notes && (
