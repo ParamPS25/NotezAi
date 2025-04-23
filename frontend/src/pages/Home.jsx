@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar"; 
 import UploadForm from "../components/UploadForm";
@@ -11,6 +11,24 @@ const Home = () => {
   const [editedNotes, setEditedNotes] = useState("");
   const [notesHistory, setNotesHistory] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notesList, setNotesList] = useState([]);
+
+  useEffect(() => {
+    const fetchNotesHistory = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/generate/history", {
+          withCredentials: true,
+        });
+        if (res.data.success) {
+          setNotesList(res.data.notes);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notes history:", err);
+      }
+    };
+  
+    fetchNotesHistory();
+  }, [notes]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -71,6 +89,7 @@ const Home = () => {
   return (
     <div className="flex">
       <Sidebar
+        notesList={notesList}
         notesHistory={notesHistory}
         onSelectNote={handleSelectNote}
         isOpen={sidebarOpen}
@@ -88,7 +107,7 @@ const Home = () => {
         {notes && (
           <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto">
             <h2 className="text-xl font-semibold mb-2">
-              Generated Notes:{" "}
+              Generated Notes : {" "}
               <span className="text-[16px] text-green-900">(You can edit the notes here)</span>
             </h2>
             <Textarea

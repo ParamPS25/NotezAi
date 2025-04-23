@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { generateSummaryFromImages } from '../utils/gemini.js';
+import Note from '../models/NoteModel.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -13,18 +14,24 @@ export const generateNotes = async (req, res) => {
     }));
 
     const summary = await generateSummaryFromImages(images);
-
     // console.log('Generated summary:', summary);
 
     // remove all asterisks from the content
-    const cleanedSummary = summary.replace(/\*/g, '');
+    const cleanedSummary = summary.replace(/\*/g, '').trim();
 
-    // trim any leading or trailing whitespace
-    const cleanedSummaryWithoutNewLines = cleanedSummary.trim()
-    // console.log('Cleaned summary:', cleanedSummaryWithoutNewLines);
+    // console.log('Cleaned summary:', cleanedSummary);
+
+    // save to Db
+    const savedNote = new Note({
+      user: req.user.id,
+      content: cleanedSummary,
+    });
+
+    await savedNote.save();
 
     clearUploadFolder();                                // Clear the upload folder after processing
-    return res.json({ notes: cleanedSummaryWithoutNewLines });
+
+    return res.json({ notes: cleanedSummary });
   
   } catch (err) {
     console.error('Error generating notes:', err.message);
@@ -34,6 +41,7 @@ export const generateNotes = async (req, res) => {
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import NoteModel from '../models/NoteModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,4 +57,18 @@ const clearUploadFolder = () => {
         });
       }
     });
+};
+
+
+export const getUserNotes = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    const notes = await Note.find({ user: userId }).sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, notes });
+  } catch (err) {
+    console.error("Error fetching notes:", err.message);
+    res.status(500).json({ success: false, error: "Failed to fetch notes" });
+  }
 };

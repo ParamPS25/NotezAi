@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { MdOutlineMenu } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
 
-const Sidebar = ({ notesHistory, onSelectNote, isOpen, toggleSidebar }) => {
+const Sidebar = ({ notesList,notesHistory, onSelectNote, isOpen, toggleSidebar }) => {
   return (
     <>
       {/* Toggle Button (mobile only) */}
@@ -21,20 +21,21 @@ const Sidebar = ({ notesHistory, onSelectNote, isOpen, toggleSidebar }) => {
 
         <h2 className="text-lg font-semibold mb-2">Previous Notes</h2>
         <div className="flex flex-col gap-2">
-          {notesHistory.length === 0 ? (
+          {notesList.length === 0 ? (
             <p className="text-sm text-gray-500">No notes yet.</p>
           ) : (
-            notesHistory.map((note, index) => (
+            notesList.map((note, index) => (
               <Button
                 key={index}
                 variant="ghost"
                 className="justify-start text-left cursor-pointer hover:bg-amber-300 bg-amber-200"
                 onClick={() => {
-                  onSelectNote(note);
+                  onSelectNote(note.content);
                   if (window.innerWidth < 768) toggleSidebar(); // Auto-close on mobile
                 }}
               >
-                Note - {index + 1} 
+                {note.content.slice(0, 20)}...
+                {note.content.length > 20 ? "..." : ""}
               </Button>
             ))
           )}
