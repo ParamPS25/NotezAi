@@ -15,6 +15,7 @@ passport.use(
             try{
                 const existingUser = await User.findOne({ googleId: profile.id });
                 if (existingUser) {
+                    // console.log("User already exists:", existingUser);
                     return done(null, existingUser);           // existing user found, return the user 
                 }
                 const newUser = await new User({
@@ -24,6 +25,7 @@ passport.use(
                     photo: profile.photos[0].value,
                 }).save();
 
+                // console.log("New user created:", newUser);
                 done(null, newUser);                           // new user created, return the new user    
 
             } catch(err) {

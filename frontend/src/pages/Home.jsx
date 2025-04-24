@@ -5,6 +5,8 @@ import UploadForm from "../components/UploadForm";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import UserAuthStatus from "../components/UserAuthStatus";
+import { useAuth } from "../context/AuthContext";
+
 
 const Home = () => {
   const [notes, setNotes] = useState("");
@@ -12,6 +14,8 @@ const Home = () => {
   const [notesHistory, setNotesHistory] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notesList, setNotesList] = useState([]);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchNotesHistory = async () => {
@@ -28,7 +32,7 @@ const Home = () => {
     };
   
     fetchNotesHistory();
-  }, [notes]);
+  }, [notes,user]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -84,10 +88,17 @@ const Home = () => {
   const handleSelectNote = (note) => {
     setNotes(note);
     setEditedNotes(note);
+    window.scrollTo({ top: 0, behavior: "smooth" });    // Scroll to top when a note is selected
   };
 
+  // Layout
+  // div.flex.h-screen.overflow-hidden: wraps everything, takes full height, hides overflow
+  // Sidebar: fixed width, scrollable inside (overflow-y-auto)
+  // main.flex-1.overflow-y-auto: scrolls independently
+
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">  
+      {/* Sidebar */}
       <Sidebar
         notesList={notesList}
         notesHistory={notesHistory}
@@ -96,14 +107,19 @@ const Home = () => {
         toggleSidebar={toggleSidebar}
       />
 
-      <main className="flex-1 p-4 md:ml-16 mt-5 md:mt-10">
-          <div className="p-4 border-b flex justify-between items-center">
+      {/* Main Content */}
+      <main className="flex-1 p-2 md:ml-16 mt-3 md:mt-0 overflow-y-auto">
+
+          {/* header and user auth status */}
+          <div className="p-4 border-b flex justify-between items-center ">
             <h1 className="text-lg font-bold">AI Notes Maker</h1>
               <UserAuthStatus />
           </div>
-
+        
+        {/* Upload Form */}
         <UploadForm onUpload={handleUpload} />
 
+        {/* Notes Display */}
         {notes && (
           <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto">
             <h2 className="text-xl font-semibold mb-2">
