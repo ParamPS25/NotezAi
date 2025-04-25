@@ -49,7 +49,8 @@ const UploadForm = ({ onUpload }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full lg:max-w-lg max-w-md mx-auto flex flex-col gap-6 mt-4 bg-white p-6 rounded-lg shadow-md"
+      className="w-full lg:max-w-lg max-w-md mx-auto flex flex-col gap-6 mt-4 bg-white p-6 rounded-lg 
+        shadow-md dark:bg-gray-800 dark:text-white"
     >
       {/* Hidden file input */}
       <Input
@@ -97,7 +98,7 @@ const UploadForm = ({ onUpload }) => {
         </div>
       )}
 
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-between gap-4 ">
         <Button type="button" variant="outline" onClick={handleClickAdd} disabled={loading}>
           Add Images
         </Button>

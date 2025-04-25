@@ -5,8 +5,13 @@ import UploadForm from "../components/UploadForm";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import UserAuthStatus from "../components/UserAuthStatus";
-import { useAuth } from "../context/AuthContext";
 
+import { MdDarkMode } from "react-icons/md";
+import { MdOutlineDarkMode } from "react-icons/md";
+
+
+import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 const Home = () => {
   const [notes, setNotes] = useState("");
@@ -16,6 +21,7 @@ const Home = () => {
   const [notesList, setNotesList] = useState([]);
 
   const { user } = useAuth();
+  const {theme,toggleTheme} = useTheme(); 
 
   useEffect(() => {
     const fetchNotesHistory = async () => {
@@ -97,7 +103,7 @@ const Home = () => {
   // main.flex-1.overflow-y-auto: scrolls independently
 
   return (
-    <div className="flex h-screen overflow-hidden">  
+    <div className="flex h-screen overflow-hidden dark:bg-gray-900">  
       {/* Sidebar */}
       <Sidebar
         notesList={notesList}
@@ -108,30 +114,40 @@ const Home = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 p-2 md:ml-16 mt-3 md:mt-0 overflow-y-auto">
+      <main className="flex-1 p-2 md:ml-6 mt-3 md:mt-0 overflow-y-auto dark:bg-gray-900">
 
           {/* header and user auth status */}
           <div className="p-4 border-b flex justify-between items-center ">
-            <h1 className="text-lg font-bold">AI Notes Maker</h1>
+            <div className="flex items-center gap-2">
+                <h1 className="text-lg font-bold mt-2">AI Notes Maker</h1>
+                <Button 
+                  onClick={toggleTheme}
+                  className="bg-blue-300 text-black rounded-full font-bold hover:bg-blue-400 transition duration-200 mt-2"
+                  variant="outline"
+                >
+                    {theme === "dark" ? <MdOutlineDarkMode size={20} /> : <MdDarkMode size={20} />}
+                </Button>
+            </div>
               <UserAuthStatus />
           </div>
+        
         
         {/* Upload Form */}
         <UploadForm onUpload={handleUpload} />
 
         {/* Notes Display */}
         {notes && (
-          <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto">
-            <h2 className="text-xl font-semibold mb-2">
+          <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto dark:bg-gray-800 dark:text-white">
+            <h2 className="text-xl font-semibold mb-2 dark:text-white">
               Generated Notes : {" "}
-              <span className="text-[16px] text-green-900">(You can edit the notes here)</span>
+              <span className="text-[16px] text-green-900 dark:text-green-500">(You can edit the notes here)</span>
             </h2>
             <Textarea
               value={editedNotes}
               onChange={handleNotesChange}
-              className="w-full h-48 mb-4"
+              className="w-full h-48 mb-4 dark:bg-gray-700"
             />
-            <Button className="mt-4" onClick={handleDownloadPDF}>
+            <Button className="mt-2 dark:hover:text-[15px]" onClick={handleDownloadPDF}>
               Download as PDF
             </Button>
           </div>
