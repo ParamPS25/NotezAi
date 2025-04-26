@@ -9,6 +9,10 @@ import UserAuthStatus from "../components/UserAuthStatus";
 import { MdDarkMode } from "react-icons/md";
 import { MdOutlineDarkMode } from "react-icons/md";
 
+import { MdLightMode } from "react-icons/md";
+import { MdOutlineLightMode } from "react-icons/md";
+import { LuMaximize } from "react-icons/lu";
+import { LuMinimize } from "react-icons/lu";
 
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -19,9 +23,15 @@ const Home = () => {
   const [notesHistory, setNotesHistory] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notesList, setNotesList] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(false); 
 
   const { user } = useAuth();
   const {theme,toggleTheme} = useTheme(); 
+
+  const toggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+
+  }
 
   useEffect(() => {
     const fetchNotesHistory = async () => {
@@ -122,10 +132,11 @@ const Home = () => {
                 <h1 className="text-lg font-bold mt-2">AI Notes Maker</h1>
                 <Button 
                   onClick={toggleTheme}
-                  className="bg-blue-300 text-black rounded-full font-bold hover:bg-blue-400 transition duration-200 mt-2"
+                  className="bg-blue-300 text-black rounded-full font-bold hover:bg-blue-400 transition duration-200 mt-2 
+                    dark:bg-transparent dark:text-white dark:hover:bg-blue-200 dark:hover:text-black"
                   variant="outline"
                 >
-                    {theme === "dark" ? <MdOutlineDarkMode size={20} /> : <MdDarkMode size={20} />}
+                    {theme === "dark" ? <MdOutlineLightMode size={20}/> : <MdLightMode size={20} />}
                 </Button>
             </div>
               <UserAuthStatus />
@@ -137,7 +148,8 @@ const Home = () => {
 
         {/* Notes Display */}
         {notes && (
-          <div className="mt-8 p-4 bg-white shadow rounded md:w-[900px] w-full mx-auto dark:bg-gray-800 dark:text-white">
+        <div className={`mt-8 p-4 bg-white shadow rounded ${isExpanded ? "w-full md:h-[82vh] mb-4 sm:h-[80vh]" : "md:w-[900px] w-full"} 
+          mx-auto dark:bg-gray-800 dark:text-white transition-all duration-300`}>
             <h2 className="text-xl font-semibold mb-2 dark:text-white">
               Generated Notes : {" "}
               <span className="text-[16px] text-green-900 dark:text-green-500">(You can edit the notes here)</span>
@@ -145,11 +157,18 @@ const Home = () => {
             <Textarea
               value={editedNotes}
               onChange={handleNotesChange}
-              className="w-full h-48 mb-4 dark:bg-gray-700"
+              className={`w-full ${isExpanded ? "h-[65vh]" : "h-48"} mb-4 dark:bg-gray-700`}
             />
-            <Button className="mt-2 dark:hover:text-[15px]" onClick={handleDownloadPDF}>
-              Download as PDF
-            </Button>
+            <div className="flex justify-between items-center mt-4">
+              <Button className={`dark:hover:text-[15px]`} onClick={handleDownloadPDF}>
+                Download as PDF
+              </Button>
+
+              <Button className="" onClick={toggleExpand}>
+                {isExpanded ? <LuMinimize size={20} /> : <LuMaximize size={20} />}
+              </Button>
+            </div>
+            
           </div>
         )}
       </main>
