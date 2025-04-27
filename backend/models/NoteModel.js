@@ -10,7 +10,14 @@ const noteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title : {
+    type: String,
+  },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },

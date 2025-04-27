@@ -37,7 +37,7 @@ const Sidebar = ({ notesList, notesHistory, onSelectNote, isOpen, toggleSidebar 
                     variant="ghost"
                     className="justify-start text-left cursor-pointer hover:bg-amber-700 "
                     onClick={() => {
-                      onSelectNote(note.content);
+                      onSelectNote(note);  // Pass the entire note object when selecting a note , not just note.content with note._id so, can edit that note separately
                       if (window.innerWidth < 768) toggleSidebar(); // Auto-close on mobile
                     }}
                   >

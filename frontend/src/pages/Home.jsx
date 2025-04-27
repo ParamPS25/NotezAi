@@ -4,6 +4,8 @@ import Sidebar from "../components/Sidebar";
 import UploadForm from "../components/UploadForm";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner"
+
 import UserAuthStatus from "../components/UserAuthStatus";
 
 import { MdDarkMode } from "react-icons/md";
@@ -13,6 +15,11 @@ import { MdLightMode } from "react-icons/md";
 import { MdOutlineLightMode } from "react-icons/md";
 import { LuMaximize } from "react-icons/lu";
 import { LuMinimize } from "react-icons/lu";
+import { MdModeEdit } from "react-icons/md";
+import { IoMdDownload } from "react-icons/io";
+import { FaRegSave } from "react-icons/fa";
+import { TbCancel } from "react-icons/tb";
+
 
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -24,13 +31,42 @@ const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notesList, setNotesList] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false); 
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const { user } = useAuth();
   const {theme,toggleTheme} = useTheme(); 
 
   const toggleExpand = () => {
     setIsExpanded((prev) => !prev);
+  }
 
+  const handleSaveNotes = async () => {
+    try{
+      const res = await axios.post(`http://localhost:5000/api/generate/save/${selectedNoteId}`, 
+        { notes: editedNotes }, 
+        { withCredentials: true}
+      );
+      if (res.data.success) {
+        setNotesList((prev) => prev.map(note => note._id === selectedNoteId ? { ...note, content: editedNotes } : note));
+        setNotes(res.data.note.content); // Update the notes state with the saved note content
+        // setEditedNotes("");
+        setIsEditing(false);
+        toast("Notes saved successfully!", {
+          description: "Your notes have been saved.",
+          duration: 3000,
+        });
+      }
+    }
+    catch (err) {
+      // alert("Error saving notes. Please try again.");
+      toast.error("Error saving notes. Please try again.", {
+        description: "An error occurred while saving your notes.",
+        duration: 3000,
+      });
+      console.error("Error saving notes:", err);
+      // setEditedNotes("");
+    }
   }
 
   useEffect(() => {
@@ -67,7 +103,7 @@ const Home = () => {
       });
 
       setNotes(res.data.notes);
-      setEditedNotes(res.data.notes);
+      // setEditedNotes(res.data.notes);
       setNotesHistory((prev) => [res.data.notes, ...prev]);
     } catch (err) {
       console.error("Error uploading images:", err);
@@ -78,7 +114,7 @@ const Home = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/download-pdf",
-        { notes: editedNotes },
+        { notes: notes },
         {
           responseType: "blob",
           headers: {
@@ -101,9 +137,12 @@ const Home = () => {
     setEditedNotes(event.target.value);
   };
 
+  // Handle note selection from sidebar , to accept a note object, not just a string - to edit it separately with note._id and content
+  // This function is called when a note is selected from the sidebar
   const handleSelectNote = (note) => {
-    setNotes(note);
-    setEditedNotes(note);
+    setNotes(note.content);
+    setEditedNotes(note.content);
+    setSelectedNoteId(note._id);                         // Store the selected note ID
     window.scrollTo({ top: 0, behavior: "smooth" });    // Scroll to top when a note is selected
   };
 
@@ -148,27 +187,61 @@ const Home = () => {
 
         {/* Notes Display */}
         {notes && (
-        <div className={`mt-8 p-4 bg-white shadow rounded ${isExpanded ? "w-full md:h-[82vh] mb-4 sm:h-[80vh]" : "md:w-[900px] w-full"} 
+        <div className={`mt-8 p-4 bg-white shadow rounded ${isExpanded ? "w-full md:h-[86vh] mb-4 sm:h-[86vh]" : "md:w-[900px] w-full"} 
           mx-auto dark:bg-gray-800 dark:text-white transition-all duration-300`}>
-            <h2 className="text-xl font-semibold mb-2 dark:text-white">
-              Generated Notes : {" "}
-              <span className="text-[16px] text-green-900 dark:text-green-500">(You can edit the notes here)</span>
-            </h2>
-            <Textarea
-              value={editedNotes}
-              onChange={handleNotesChange}
-              className={`w-full ${isExpanded ? "h-[65vh]" : "h-48"} mb-4 dark:bg-gray-700`}
-            />
-            <div className="flex justify-between items-center mt-4">
-              <Button className={`dark:hover:text-[15px]`} onClick={handleDownloadPDF}>
-                Download as PDF
-              </Button>
+            
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold mb-2 mt-2 dark:text-white">
+                  Generated Notes : {" "}
+                  {isEditing ? 
+                    <span className="text-[16px] text-green-900 dark:text-green-500 mb-4">(you can edit the notes here)</span> : 
+                    <span className="text-[16px] text-green-900 dark:text-green-500 mb-4">(View mode)</span>
+                  }
+                </h2>
 
-              <Button className="" onClick={toggleExpand}>
-                {isExpanded ? <LuMinimize size={20} /> : <LuMaximize size={20} />}
-              </Button>
+                <Button className="" onClick={toggleExpand}>
+                  {isExpanded ? <LuMinimize size={20} /> : <LuMaximize size={20} />}
+                </Button>
             </div>
             
+
+            <Textarea
+                value={isEditing ? editedNotes : notes}
+                onChange={isEditing ? handleNotesChange : undefined}
+                readOnly={!isEditing}
+                className={`w-full ${isExpanded ? "h-[65vh]" : "h-48"} mb-4 dark:bg-gray-700 resize-none`}
+            />
+
+            <div className="flex justify-between items-center mt-4 flex-col-reverse sm:flex-row md:flex-row gap-2">
+              <Button className={`dark:bg-gray-200`} onClick={handleDownloadPDF}>
+                <IoMdDownload size={20} /> Download as PDF
+              </Button>
+
+              {isEditing ? (
+                <div className="flex gap-2 md:gap-6 ">
+                  <Button onClick={handleSaveNotes}
+                    className={`bg-green-400 hover:bg-green-600  text-black transition duration-200`}>
+                    <FaRegSave size={20} /> Save Notes
+                  </Button>
+
+                  <Button 
+                    className = {'bg-red-400 hover:bg-red-500  text-black transition duration-200'}
+                    onClick={() => {
+                    setIsEditing(false);
+                    setEditedNotes(notes);  // Reset edits if canceled
+                  }}>
+                    <TbCancel size={20} /> Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  className={`dark:bg-cyan-200 dark:hover:bg-cyan-500 bg-blue-500 hover:bg-blue-700 text-black transition duration-200`}
+                  onClick={() => setIsEditing(true)}>
+                  <MdModeEdit size={20} /> Edit Notes
+                </Button>
+              )}
+
+            </div>
           </div>
         )}
       </main>

@@ -72,3 +72,48 @@ export const getUserNotes = async (req, res) => {
     res.status(500).json({ success: false, error: "Failed to fetch notes" });
   }
 };
+
+
+export const saveUserNotes = async (req,res) => {
+  try {
+    const { notes } = req.body;
+    const noteId = req.params.noteId; 
+    const userId = req.user.id;  
+
+    if (!notes) {
+      return res.status(400).json({ success: false, message: "Notes content is required" });
+    }
+
+    if (!noteId) {
+      return res.status(400).json({ success: false, message: "Note ID is required" });
+    }
+
+    const note = await NoteModel.findById(noteId); 
+    if (!note) {
+      return res.status(404).json({ success: false, message: "Note not found" });
+    }
+
+    const updatedNote = await NoteModel.findByIdAndUpdate(
+      noteId,
+      { content: notes },
+      { new: true } 
+    );
+
+    if (!updatedNote) {
+      return res.status(500).json({ success: false, message: "Failed to update note" });
+    }
+
+    const savedNote = await updatedNote.save();
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Notes saved successfully", 
+      note: updatedNote 
+    });
+
+  } catch (err) {
+    console.error("Error saving notes:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  };
+
+};

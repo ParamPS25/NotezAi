@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
 import { FaGoogle } from "react-icons/fa";
+import { MdLogout } from "react-icons/md";
 
 const UserAuthStatus = () => {
   const { user } = useAuth();
@@ -50,9 +51,10 @@ const UserAuthStatus = () => {
 
       <Button
         onClick={handleLogout}
-        className="bg-red-500 text-white px-3 py-1 rounded"
+        className="bg-red-500 text-white px-3 py-1 rounded flex items-center gap-2"
       >
-        Logout
+        <MdLogout size={20} />
+        <span className="hidden sm:inline">Logout</span>
       </Button>
     </div>
   );
