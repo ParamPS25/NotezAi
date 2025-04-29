@@ -146,6 +146,66 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });    // Scroll to top when a note is selected
   };
 
+  const handleUpdateTitle = async (noteId, newTitle) => {
+      try{
+        if(!newTitle) {
+          toast.error("Title cannot be empty.", {
+            description: "Please provide a valid title.",
+            duration: 3000,
+          });
+          return;
+        }
+        if(newTitle.length > 20) {
+          toast.error("Title is too long.", {
+            description: "Please provide a title with less than 20 characters.",
+            duration: 3000,
+          });
+          return;
+        }
+        const res = await axios.post(`http://localhost:5000/api/generate/update/${noteId}`, 
+          { title : newTitle }, 
+          { withCredentials: true}
+        );
+        if (res.data.success) {
+          setNotesList((prev) => prev.map(note => note._id === noteId ? { ...note, title: newTitle } : note));
+          toast("Note title updated successfully!", {
+            description: "Your note title has been updated.",
+            duration: 3000,
+          });
+        }
+      } catch (err) {
+        console.error("Error updating note title:", err);
+        toast.error("Error updating note title. Please try again.", {
+          description: "An error occurred while updating the note title.",
+          duration: 3000,
+        });
+      }
+  }
+
+  const handleDeleteNote = async (noteId) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/generate/${noteId}`, {
+        withCredentials: true,
+      });
+      if (res.data.success) {
+        setNotesList((prev) => prev.filter((note) => note._id !== noteId));
+        setNotes("");                 // Clear notes when a note is deleted
+        setEditedNotes(""); 
+        setSelectedNoteId(null);      // Clear selected note ID
+        toast("Note deleted successfully!", {
+          description: "Your note has been deleted.",
+          duration: 3000,
+        });
+      }
+    } catch (err) {
+      console.error("Error deleting note:", err);
+      toast.error("Error deleting note. Please try again.", {
+        description: "An error occurred while deleting the note.",
+        duration: 3000,
+      });
+    }
+  }
+
   // Layout
   // div.flex.h-screen.overflow-hidden: wraps everything, takes full height, hides overflow
   // Sidebar: fixed width, scrollable inside (overflow-y-auto)
@@ -160,6 +220,8 @@ const Home = () => {
         onSelectNote={handleSelectNote}
         isOpen={sidebarOpen}
         toggleSidebar={toggleSidebar}
+        onDeleteNote={handleDeleteNote}
+        onTitleUpdate={handleUpdateTitle}
       />
 
       {/* Main Content */}
