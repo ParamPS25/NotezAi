@@ -117,3 +117,60 @@ export const saveUserNotes = async (req,res) => {
   };
 
 };
+
+
+export const updateNoteTitle = async (req, res) => {
+    try{
+        const { title } = req.body;
+        const noteId = req.params.noteId; 
+
+        if (!title) {
+            return res.status(400).json({ success: false, message: "Title is required" });
+        }
+
+        if (!noteId) {
+            return res.status(400).json({ success: false, message: "Note ID is required" });
+        }
+
+        const note = await NoteModel.findById(noteId); 
+        if (!note) {
+            return res.status(404).json({ success: false, message: "Note not found" });
+        }
+
+        note.title = title;
+        note.updatedAt = new Date();
+        await note.save(); 
+
+        return res.status(200).json({ success: true, message: "Title updated successfully", note });
+
+    } catch (err) {
+        console.error("Error updating note title:", err.message);
+        return res.status(500).json({ success: false, message: "Failed to update note title" });
+    }
+}
+
+
+export const deleteNote = async (req, res) => {
+    try {
+        const noteId = req.params.noteId; 
+
+        if (!noteId) {
+            return res.status(400).json({ success: false, message: "Note ID is required" });
+        }
+
+        const note = await NoteModel.findById(noteId); 
+        if (!note) {
+            return res.status(404).json({ success: false, message: "Note not found" });
+        }
+
+        await NoteModel.findByIdAndDelete(noteId); 
+
+        return res.status(200).json({ success: true, message: "Note deleted successfully" });
+
+    } catch (err) {
+        console.error("Error deleting note:", err.message);
+        return res.status(500).json({ success: false, message: "Failed to delete note" });
+    }
+}
+
+

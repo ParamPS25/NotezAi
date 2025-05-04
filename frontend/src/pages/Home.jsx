@@ -184,7 +184,7 @@ const Home = () => {
 
   const handleDeleteNote = async (noteId) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/generate/${noteId}`, {
+      const res = await axios.delete(`http://localhost:5000/api/generate/delete/${noteId}`, {
         withCredentials: true,
       });
       if (res.data.success) {
