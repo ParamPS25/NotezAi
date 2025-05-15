@@ -13,7 +13,7 @@ import notesRoute from './routes/notesRoute.js';
 import pdfRoute from './routes/pdfRoute.js';
 import authRoute from './routes/authRoute.js';
 
-
+import MongoStore from 'connect-mongo';
 
 const app = express();
 app.use(cors({
@@ -30,6 +30,12 @@ app.use(session({
     secret : process.env.SESSION_SECRET,
     resave : false,                          // do not save session if unmodified
     saveUninitialized : false,              // do not create session until something stored
+    store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 7 * 24 * 60 * 60,  // session expiry in seconds (7 days)
+    autoRemove: 'native',   // auto-remove expired sessions
+  }),
+
 }));
 
 app.use(passport.initialize());     // initialize passport

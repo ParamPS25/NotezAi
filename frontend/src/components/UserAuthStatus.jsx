@@ -9,13 +9,15 @@ const UserAuthStatus = () => {
   const { user } = useAuth();
   const navigate = useNavigate(); 
 
+  const API = import.meta.env.VITE_API_URL;
+
   const handleLogin = () => {
-    window.open("http://localhost:5000/auth/google", "_self");
+    window.open(`${API}/auth/google", "_self`);
   };
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/auth/logout", {
+      await axios.get(`${API}/auth/logout`, {
         withCredentials: true,                     
       });
       window.location.reload();                                 // Refresh to clear auth state

@@ -41,9 +41,11 @@ const Home = () => {
     setIsExpanded((prev) => !prev);
   }
 
+  const API = import.meta.env.VITE_API_URL;
+
   const handleSaveNotes = async () => {
     try{
-      const res = await axios.post(`http://localhost:5000/api/generate/save/${selectedNoteId}`, 
+      const res = await axios.post(`${API}/api/generate/save/${selectedNoteId}`, 
         { notes: editedNotes }, 
         { withCredentials: true}
       );
@@ -72,7 +74,7 @@ const Home = () => {
   useEffect(() => {
     const fetchNotesHistory = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/generate/history", {
+        const res = await axios.get(`${API}/api/generate/history`, {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -95,7 +97,7 @@ const Home = () => {
     });
 
     try {
-      const res = await axios.post("http://localhost:5000/api/generate", formData, {
+      const res = await axios.post(`${API}/api/generate`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -124,7 +126,7 @@ const Home = () => {
   const handleDownloadPDF = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/download-pdf",
+        `${API}/api/download-pdf`,
         { notes: notes },
         {
           responseType: "blob",
@@ -173,7 +175,7 @@ const Home = () => {
           });
           return;
         }
-        const res = await axios.post(`http://localhost:5000/api/generate/update/${noteId}`, 
+        const res = await axios.post(`${API}/api/generate/update/${noteId}`, 
           { title : newTitle }, 
           { withCredentials: true}
         );
@@ -195,7 +197,7 @@ const Home = () => {
 
   const handleDeleteNote = async (noteId) => {
     try {
-      const res = await axios.delete(`http://localhost:5000/api/generate/delete/${noteId}`, {
+      const res = await axios.delete(`${API}/api/generate/delete/${noteId}`, {
         withCredentials: true,
       });
       if (res.data.success) {
