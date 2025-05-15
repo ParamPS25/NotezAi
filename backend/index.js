@@ -30,11 +30,11 @@ app.use(session({
     secret : process.env.SESSION_SECRET,
     resave : false,                          // do not save session if unmodified
     saveUninitialized : false,              // do not create session until something stored
-//     store: MongoStore.create({
-//     mongoUrl: process.env.MONGO_URI,
-//     ttl: 7 * 24 * 60 * 60,  // session expiry in seconds (7 days)
-//     autoRemove: 'native',   // auto-remove expired sessions
-//   }),
+    store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 7 * 24 * 60 * 60,  // session expiry in seconds (7 days)
+    autoRemove: 'native',   // auto-remove expired sessions
+  }),
 
 }));
 
