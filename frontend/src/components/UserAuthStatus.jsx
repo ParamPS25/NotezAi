@@ -11,6 +11,8 @@ const UserAuthStatus = () => {
 
   const API = import.meta.env.VITE_API_URL;
 
+  console.log("Current user state:", user); // debugging
+  
   const handleLogin = () => {
     window.open(`${API}/auth/google`, "_self");
   };
