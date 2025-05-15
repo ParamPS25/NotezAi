@@ -17,9 +17,11 @@ import MongoStore from 'connect-mongo';
 
 const app = express();
 app.use(cors({
-    origin: process.env.CLIENT_URL,  // frontend URL
+    origin: "https://notez-ai.vercel.app",  // frontend URL
     // origin: 'http://localhost:5173',  //  frontend URL
     credentials : true,              // allow session cookie from browser to pass through
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 app.use(cookieParser());
@@ -30,11 +32,11 @@ app.use(session({
     secret : process.env.SESSION_SECRET,
     resave : false,                          // do not save session if unmodified
     saveUninitialized : false,              // do not create session until something stored
-//     store: MongoStore.create({
-//     mongoUrl: process.env.MONGO_URI,
-//     ttl: 7 * 24 * 60 * 60,  // session expiry in seconds (7 days)
-//     autoRemove: 'native',   // auto-remove expired sessions
-//   }),
+    store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 7 * 24 * 60 * 60,  // session expiry in seconds (7 days)
+    autoRemove: 'native',   // auto-remove expired sessions
+  }),
 
 }));
 

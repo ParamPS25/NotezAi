@@ -33,7 +33,7 @@ router.get('/success', (req, res) => {
         httpOnly : true,                                    // only accessible by the web server
         // secure : process.env.NODE_ENV === 'production',     // set to true if using https
         secure : true,                                      
-        sameSite : "None",                                   // protect against CSRF attacks
+        sameSite : "none",                                   // protect against CSRF attacks
         maxAge : 7 * 24 * 60 * 60 * 1000,                   // 7 days
     })
 
@@ -61,7 +61,7 @@ router.get('/logout', (req, res) => {
         httpOnly: true,
         // secure: process.env.NODE_ENV === "production",
         secure: true,
-        sameSite: "None",
+        sameSite: "none",
       });
   
       res.status(200).json({
