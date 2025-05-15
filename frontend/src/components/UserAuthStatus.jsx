@@ -12,7 +12,7 @@ const UserAuthStatus = () => {
   const API = import.meta.env.VITE_API_URL;
 
   const handleLogin = () => {
-    window.open(`${API}/auth/google`, "_self");
+    window.open(`${API}/auth/google", "_self`);
   };
 
   const handleLogout = async () => {
