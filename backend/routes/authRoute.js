@@ -31,9 +31,8 @@ router.get('/success', (req, res) => {
     // send token in secure cookie
     res.cookie('token',token,{
         httpOnly : true,                                    // only accessible by the web server
-        // secure : process.env.NODE_ENV === 'production',     // set to true if using https
-        secure : true,                                      
-        sameSite : "None",                                   // protect against CSRF attacks
+        secure : process.env.NODE_ENV === 'production',     // set to true if using https
+        sameSite : 'None',                                   // protect against CSRF attacks
         maxAge : 7 * 24 * 60 * 60 * 1000,                   // 7 days
     })
 
@@ -59,8 +58,7 @@ router.get('/logout', (req, res) => {
     req.logout(() => {                                  // logout the user from the session
       res.clearCookie("token", {                        // clear the cookie from the browser
         httpOnly: true,
-        // secure: process.env.NODE_ENV === "production",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "None",
       });
   
