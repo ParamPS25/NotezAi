@@ -13,10 +13,8 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.get(`${API}/auth/success`, {
         withCredentials: true,
       });
-      console.log("User data fetched:", res.data); // debugging
       setUser(res.data.user);
     } catch (err) {
-      console.error("Error fetching user data:", err); // debugging
       setUser(null);
     }
   };
