@@ -106,6 +106,17 @@ const Home = () => {
       // setEditedNotes(res.data.notes);
       setNotesHistory((prev) => [res.data.notes, ...prev]);
     } catch (err) {
+      if (err.response?.status === 429) {
+        toast.error("Daily note generation limit reached (5 per day).", {
+          description: "You have reached the maximum number of notes you can generate today.",
+          duration: 3000,
+        });
+      } else {
+        toast.error("Error generating notes. Please try again.", {
+          description: "An error occurred while generating your notes.",
+          duration: 3000,
+        });
+      }
       console.error("Error uploading images:", err);
     }
   };
@@ -126,7 +137,7 @@ const Home = () => {
       const blob = new Blob([response.data], { type: "application/pdf" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "notes.pdf";
+      link.download = `EzNotesAi.pdf`;
       link.click();
     } catch (err) {
       console.error("Failed to download PDF:", err);

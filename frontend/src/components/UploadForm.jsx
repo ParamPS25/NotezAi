@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MdCancel } from "react-icons/md";
 import { useAuth } from "../context/AuthContext";
-import Spinner  from "../components/ui/spinner"; // Assuming you have a Spinner component
+import Spinner  from "../components/ui/spinner"; 
 
 const UploadForm = ({ onUpload }) => {
   const [files, setFiles] = useState([]);

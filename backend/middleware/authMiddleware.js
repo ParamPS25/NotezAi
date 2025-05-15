@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import dayjs from "dayjs"
+import Note from "../models/NoteModel.js";
 
 export const authenticateUser = (req, res, next) => {
   const token = req.cookies.token;
@@ -15,5 +17,32 @@ export const authenticateUser = (req, res, next) => {
 
   } catch (err) {
     return res.status(401).json({ message: "Unauthorized. Invalid token." });
+  }
+};
+
+export const rateLimitNotes = async (req, res, next) => {
+  try{
+    const todayStart = dayjs().startOf('day').toDate(); 
+    const todayEnd = dayjs().endOf('day').toDate();
+    
+    // Find notes created today
+    const notesToday = await Note.find({
+      user : req.user.id,
+      createdAt: {
+        $gte: todayStart,
+        $lt: todayEnd
+      }
+    });  
+
+    if (notesToday.length >= 5) {
+      return res.status(429).json({ 
+        message: "Daily note generation limit reached (5 per day)." 
+      });
+    }
+
+    next();
+  } catch (err) {
+    console.error("Error in rate limiting:", err);
+    return res.status(500).json({ message: "Internal server error." });
   }
 };
