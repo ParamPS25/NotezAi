@@ -42,3 +42,27 @@
   <li>AI reads and summarizes content.</li>
   <li>View, manage, and export your notes.</li>
 </ol>
+
+
+![image](https://github.com/user-attachments/assets/b81170fe-fe15-41fb-aac1-67e5b9112c7a)
+
+![image](https://github.com/user-attachments/assets/2bdfab86-ad8e-4573-8cc6-47df2f39ad5c)
+
+![image](https://github.com/user-attachments/assets/a511973a-8b57-472d-a8b1-a62314e4ec29)
+
+![image](https://github.com/user-attachments/assets/3373dc46-732a-465c-b70d-91bb12c40dea)
+
+![image](https://github.com/user-attachments/assets/b3a2763c-a081-4874-999b-c4082c80ecb9)
+
+![image](https://github.com/user-attachments/assets/04fd8ef7-d85e-483d-bb0a-7efe4f4d5fc2)
+
+![image](https://github.com/user-attachments/assets/9ae3ac35-e1a1-4b79-ab05-7382396d9e2d)
+
+![image](https://github.com/user-attachments/assets/20f469dd-c656-409f-9b19-c9fe3d78cc86)
+
+![image](https://github.com/user-attachments/assets/bc1cfbcc-6512-43fb-8a2f-e9b44e396820)
+
+
+
+
+
