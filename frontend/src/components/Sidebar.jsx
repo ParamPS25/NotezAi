@@ -20,7 +20,7 @@ const Sidebar = ({ notesList, notesHistory, onSelectNote, isOpen, toggleSidebar,
   return (
     <>
       {/* Toggle Button (mobile only) (menu / close) */}
-      <div className={`md:hidden fixed top-2 ${isOpen ? 'left-50' : 'left-4'} z-50 clickable`}>
+      <div className={`md:hidden fixed top-2 ${isOpen ? 'left-44' : 'left-4'} z-50 clickable`}>
         <Button variant="ghost" onClick={toggleSidebar} size="icon">
           {isOpen ? <IoCloseSharp /> : <MdOutlineMenu />}
         </Button>
@@ -29,15 +29,25 @@ const Sidebar = ({ notesList, notesHistory, onSelectNote, isOpen, toggleSidebar,
       {/* Sidebar */}
       {/* h-screen -> overflow-y-auto */}
       <aside
-        className={`fixed top-0 left-0 z-40 min-h-screen w-58 sm:60 md:62 bg-gray-100 p-4 border-r transition-transform duration-300 ease-in-out
+        className={`fixed top-0 left-0 z-40 h-screen w-58 sm:60 md:62 bg-gray-100 border-r transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} md:relative md:translate-x-0 shadow-2xl overflow-y-auto
         dark:bg-gray-800`}
       >
-        <h1 className="text-2xl font-bold text-center mb-6 mt-2 font-serif">EzNotes Ai</h1>
+        <div className="sticky top-0 bg-gray-100 dark:bg-gray-800 z-50 p-2">
+          <div className="flex items-center justify-center gap-2" >
+            <img
+              src="/logo.svg"
+              alt="EzNotes Ai Logo"
+              className="w-10 h-10 "              
+            >
+            </img>
+            <h1 className="text-2xl font-bold text-center mb-6 sm:mt-8 md:mt-6 lg:mt-6 mt-8 font-serif">EzNotes Ai</h1>
+          </div>
+          <h2 className="text-lg font-semibold mb-4 mt-2 text-center">Previous Notes</h2>
+        </div>
+        
 
-        <h2 className="text-lg font-semibold mb-4 mt-2 text-center">Previous Notes</h2>
-
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 p-4">
           {notesList.length === 0 ? (
             <p className="text-sm text-gray-500 text-center">No notes yet.</p>
           ) : (
@@ -52,7 +62,7 @@ const Sidebar = ({ notesList, notesHistory, onSelectNote, isOpen, toggleSidebar,
                     <Button
                       title={note.content}
                       variant="ghost"
-                      className="justify-start text-left cursor-pointer hover:bg-amber-700 "
+                      className="justify-start text-left cursor-pointer hover:bg-amber-400 "
                       onClick={() => {
                         onSelectNote(note);  // Pass the entire note object when selecting a note , not just note.content with note._id so, can edit that note separately
                         if (window.innerWidth < 768) toggleSidebar(); // Auto-close on mobile
