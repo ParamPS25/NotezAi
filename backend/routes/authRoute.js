@@ -207,7 +207,7 @@ router.get('/logout', (req, res) => {
       res.clearCookie("token", {                        // clear the cookie from the browser
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
       });
   
       res.status(200).json({
