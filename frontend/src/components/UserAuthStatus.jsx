@@ -4,25 +4,31 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
 import { FaGoogle } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
+import LoadingSpinner from "./ui/spinner";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const UserAuthStatus = () => {
-  const { user } = useAuth();
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate(); 
 
   const handleLogin = () => {
-    window.open("http://localhost:5000/auth/google", "_self");
+    // Redirect to Google auth on the backend
+    window.open(`${API_URL}/auth/google`, "_self");
   };
 
   const handleLogout = async () => {
     try {
-      await axios.get("http://localhost:5000/auth/logout", {
-        withCredentials: true,                     
-      });
-      window.location.reload();                                 // Refresh to clear auth state
+      await logout()
+      // navigate("/")                              
     } catch (error) {
       console.error("Logout failed", error);
     }
   };
+
+  if (loading){
+      <LoadingSpinner />
+  }
 
   if (!user) {
     return (

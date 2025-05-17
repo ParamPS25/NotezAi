@@ -17,7 +17,7 @@ import authRoute from './routes/authRoute.js';
 
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:5173',  //  frontend URL
+    origin: process.env.CLIENT_URL,  //  frontend URL
     credentials : true,              // allow session cookie from browser to pass through
 }));
 
@@ -29,6 +29,13 @@ app.use(session({
     secret : process.env.SESSION_SECRET,
     resave : false,                          // do not save session if unmodified
     saveUninitialized : false,              // do not create session until something stored
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', 
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    }
+
 }));
 
 app.use(passport.initialize());     // initialize passport
@@ -43,6 +50,10 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/generate', notesRoute);
 app.use('/api/download-pdf', pdfRoute);
 app.use('/auth', authRoute);
+
+app.get('/', (req, res) => {
+    res.send('API is running');
+});
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
