@@ -31,7 +31,10 @@ export const generateNotes = async (req, res) => {
 
     clearUploadFolder();                                // Clear the upload folder after processing
 
-    return res.json({ notes: cleanedSummary });
+    return res.json({ 
+      notes: cleanedSummary, 
+      noteId : savedNote._id
+    });
   
   } catch (err) {
     console.error('Error generating notes:', err.message);

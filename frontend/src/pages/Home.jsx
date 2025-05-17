@@ -107,6 +107,9 @@ const Home = () => {
       setNotes(res.data.notes);
       // setEditedNotes(res.data.notes);
       setNotesHistory((prev) => [res.data.notes, ...prev]);
+      setSelectedNoteId(res.data.noteId)                      // sending id with summary so, not create bug on editing->saving right after the notes gets generated.
+      setEditedNotes(res.data.notes)
+      
     } catch (err) {
       if (err.response?.status === 429) {
         toast.error("Daily note generation limit reached (5 per day).", {
