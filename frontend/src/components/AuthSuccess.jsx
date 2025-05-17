@@ -5,29 +5,37 @@ import LoadingSpinner from './ui/spinner';
 
 const AuthSuccess = () => {
   const navigate = useNavigate();
-  const { fetchUser } = useAuth();
-  
+  const { user, loading, fetchUser } = useAuth();  
+
   useEffect(() => {
-    // If already authenticated or still loading, do nothing yet
-    if (loading) return;
-    
-    if (user) {
-      // If we already have user data, just navigate home
-      navigate('/');
-    } else {
-      // Only fetch user if we don't already have the data
-      const handleAuth = async () => {
-        const success = await fetchUser();
-        if (success) {
-          navigate('/');
-        }
-      };
-      
-      handleAuth();
-    }
+    const handleAuth = async () => {
+      if (loading) return; 
+
+      // If we already have the user, navigate home
+      if (user) {
+        navigate('/');
+        return;
+      }
+
+      // Otherwise, attempt to fetch user info
+      const success = await fetchUser();
+      if (success) {
+        navigate('/');
+      }
+    };
+
+    handleAuth();
   }, [user, loading, fetchUser, navigate]);
 
-  
+  // Fallback for the loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">

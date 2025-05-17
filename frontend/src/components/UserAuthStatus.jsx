@@ -27,7 +27,7 @@ const UserAuthStatus = () => {
   };
 
   if (loading){
-      <LoadingSpinner />
+      return <LoadingSpinner />
   }
 
   if (!user) {

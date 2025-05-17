@@ -98,7 +98,7 @@
 import express from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import User from "../models/userModel";
+import User from "../models/userModel.js";
 
 const router = express.Router();
 
@@ -129,8 +129,16 @@ router.get('/google/callback',
             maxAge: 7 * 24 * 60 * 60 * 1000                                     // 7days
         });
 
-        // !! Redirect to the client URL with a success parameter -> authContext -> useEffect
-        res.redirect(`${process.env.CLIENT_URL}/auth-success`)
+        // Even after issuing the JWT, the Passport session (req.session) is still alive 
+        // => so , for stateless behaviour we destroy the passport session
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Failed to destroy session:", err);
+            }
+
+            // !! Redirect to the client URL with a success parameter -> authContext -> useEffect
+            res.redirect(`${process.env.CLIENT_URL}/auth-success`);
+        });
     }
 );
 
